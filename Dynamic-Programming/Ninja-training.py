@@ -34,3 +34,5 @@ print(maxMerit(n-1, len(matrix[0]), matrix,[0]*n))
 # The above code is a recursive solution to the problem of finding the maximum merit score that can be obtained by a ninja over a series of days, given a matrix of scores.
 # The function maxMerit takes in the current day, the last index of the previous day's score, and the matrix of scores as input.
 
+#----------------------------------------
+#tabulation solution:   
