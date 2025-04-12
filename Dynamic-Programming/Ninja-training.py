@@ -34,3 +34,24 @@ print(maxMerit(n-1, len(matrix[0]), matrix,[[-1]*len(matrix[0])]*n))
 
 #----------------------------------------
 #tabulation solution:   
+
+def maxMerit(day,last,matrix,dp):
+    dp[0][0] = max(matrix[0][1], matrix[0][2])
+    dp[0][1] = max(matrix[0][0], matrix[0][2])
+    dp[0][2] = max(matrix[0][0], matrix[0][1])
+    maxm = -1
+    for i in range(len(matrix)):
+        for last in range(len(matrix(0))):
+            for j in range(len(matrix[day])):
+                if(last != i):
+                    currentMerit = matrix[day][i] + maxMerit(day-1, i, matrix,dp)
+                    maxm = max(maxm, currentMerit)
+    dp[day][last] = maxm
+    return dp[day][last]
+
+
+n = 2
+matrix = [
+     [10, 50, 1],
+    [5, 100, 11]
+]
