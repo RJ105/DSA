@@ -3,7 +3,7 @@
 def allUniquePath(i,j,matirx):
     if(i == 0 and j == 0):
         return 1
-    if(i < 0 or J < 0):
+    if(i < 0 or j < 0):
         return 0
     else:
         left = allUniquePath(i, j-1)
@@ -16,3 +16,5 @@ matrix = [
      [10, 50, 1],
     [5, 100, 11]
 ]
+
+print(allUniquePath(len(matrix), len(matrix[0]), matrix))
