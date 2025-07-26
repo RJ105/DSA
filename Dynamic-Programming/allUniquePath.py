@@ -6,8 +6,8 @@ def allUniquePath(i,j,matirx):
     if(i < 0 or j < 0):
         return 0
     else:
-        left = allUniquePath(i, j-1)
-        up = allUniquePath(i-1, J)
+        left = allUniquePath(i, j-1, matirx)
+        up = allUniquePath(i-1, j, matirx)
     return left + up 
 
 
