@@ -10,7 +10,7 @@
 //         return triangle[i][j] + Math.min(minimumPathSum(triangle, i+1, j), minimumPathSum(triangle, i+1, j+1))
    
 // }
-
+//time complexity : O(2^n)
 //--------------------------------------Memoization--------------------------------------
 function minimumPathSum(triangle, i,j){
     //edge case is required only for i because j will be never exceed the column length 
