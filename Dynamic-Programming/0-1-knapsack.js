@@ -24,22 +24,24 @@
 function knapsack(capacity, weights, values, n = weights.length, memo) {
     if(n==0 || capacity==0)
         return 0
-    if(memo[n-1]) 
-        return memo[n-1]
+    if(memo[n-1][capacity]!=-1) 
+        return memo[n-1][capacity]
     if(weights[n-1] <= capacity){
         //pick or skip
-        memo[n-1] = Math.max(values[n-1] + knapsack(capacity-weights[n-1], weights, values,  n-1, memo), knapsack(capacity, weights, values, n-1, memo))
-        return memo[n-1]
+        memo[n-1][capacity] = Math.max(values[n-1] + knapsack(capacity-weights[n-1], weights, values,  n-1, memo), knapsack(capacity, weights, values, n-1, memo))
+        return memo[n-1][capacity]
     }
     else{
-        memo[n-1] = knapsack(capacity, weights, values,  n-1, memo)
-        return memo[n-1]
+       memo[n-1][capacity] = knapsack(capacity, weights, values,  n-1, memo)
+        return memo[n-1][capacity]
     }
 }
 
 // ── To run individual cases ───────────────────────────────────────────
-const result = knapsack(6,  [3,5,2], [10,20,5], 3, [0,0,0]);
-console.log('result = ', result)
+// const memo = Array.from({length : 4}, ()=>new Array(7).fill(-1)) 
+
+// const result = knapsack(6,  [3,5,2], [10,20,5], 3, memo);
+// console.log('result = ', result)
 
 
 // ── Test Cases ───────────────────────────────────────────
@@ -92,21 +94,22 @@ const testCases = [
 // ── Test Runner ───────────────────────────────────────────────────────────────
 let passed = 0, failed = 0;
 
-// testCases.forEach(([capacity, weights, values, expected], i) => {
-//     //recursion test
-//     // const result = knapsack(capacity, weights, values, weights.length);
+testCases.forEach(([capacity, weights, values, expected], i) => {
+    //recursion test
+    // const result = knapsack(capacity, weights, values, weights.length);
 
-//     //memoization test
-//     const result = knapsack(capacity, weights, values, weights.length, Array(weights.length).fill(0));
-//     const tc = `TC-${String(i + 1).padStart(2, "0")}`;
+    //memoization test
+    const memo = Array.from({length :  weights.length+1}, ()=>new Array(capacity+1).fill(-1)) 
+    const result = knapsack(capacity, weights, values, weights.length, memo);
+    const tc = `TC-${String(i + 1).padStart(2, "0")}`;
 
-//     if (result !== expected) {
-//         failed++;
-//         console.log(`${tc}: ❌ FAIL | Expected: ${expected}, Got: ${result}`);
-//     } else {
-//         passed++;
-//         console.log(`${tc}: ✅ PASS | Expected: ${expected}`);
-//     }
-// });
+    if (result !== expected) {
+        failed++;
+        console.log(`${tc}: ❌ FAIL | Expected: ${expected}, Got: ${result}`);
+    } else {
+        passed++;
+        console.log(`${tc}: ✅ PASS | Expected: ${expected}`);
+    }
+});
 
 console.log(`\nResults: ${passed} passed, ${failed} failed out of ${testCases.length} tests`);
