@@ -21,21 +21,54 @@
 
 
 // ── Knapsack memoization Implementation ──────────────────────────────
-function knapsack(capacity, weights, values, n = weights.length, memo) {
-    if(n==0 || capacity==0)
-        return 0
-    if(memo[n-1][capacity]!=-1) 
-        return memo[n-1][capacity]
-    if(weights[n-1] <= capacity){
-        //pick or skip
-        memo[n-1][capacity] = Math.max(values[n-1] + knapsack(capacity-weights[n-1], weights, values,  n-1, memo), knapsack(capacity, weights, values, n-1, memo))
-        return memo[n-1][capacity]
+// function knapsack(capacity, weights, values, n = weights.length, memo) {
+//     if(n==0 || capacity==0)
+//         return 0
+//     if(memo[n-1][capacity]!=-1) 
+//         return memo[n-1][capacity]
+//     if(weights[n-1] <= capacity){
+//         //pick or skip
+//         memo[n-1][capacity] = Math.max(values[n-1] + knapsack(capacity-weights[n-1], weights, values,  n-1, memo), knapsack(capacity, weights, values, n-1, memo))
+//         return memo[n-1][capacity]
+//     }
+//     else{
+//        memo[n-1][capacity] = knapsack(capacity, weights, values,  n-1, memo)
+//         return memo[n-1][capacity]
+//     }
+// }
+
+
+// ── Knapsack tabulation Implementation ──────────────────────────────
+
+function knapsack(capacity, weights, values){
+    const n = weights.length
+    let dp = Array.from({length : n + 1}, ()=> new Array(capacity + 1).fill(0))
+
+    for(let i=1; i<=n; i++){
+        for(j=1; j<=capacity; j++){
+            if(weights[i-1]<= j){ 
+                const pick = values[i-1] + dp[i-1][j-weights[i-1]]
+                const notPick = dp[i-1][j]
+                dp[i][j] = Math.max(pick, notPick)
+            }
+            else{
+                dp[i][j] = dp[i-1][j]
+            }
+            
+        }
     }
-    else{
-       memo[n-1][capacity] = knapsack(capacity, weights, values,  n-1, memo)
-        return memo[n-1][capacity]
-    }
+    return dp[n][capacity]
+
 }
+
+
+
+
+
+
+
+
+
 
 // ── To run individual cases ───────────────────────────────────────────
 // const memo = Array.from({length : 4}, ()=>new Array(7).fill(-1)) 
