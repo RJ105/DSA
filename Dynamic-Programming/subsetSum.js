@@ -1,22 +1,75 @@
+//----------------------Recursive implementation----------
+// function subset(weights, target, n){
+//      if(target == 0) {
+//         return true
+//     }
+
+//     if(n < 0) return false
+
+//     if(weights [n]<= target){
+//         const pick = subset(weights, target-weights[n], n-1)
+//         const skip =  subset(weights, target, n-1)
+//         return pick || skip 
+//     }
+//     else {
+//         return subset(weights, target, n-1)
+//     }
+// }
+
+//----------------------memoization implementation----------
+//we created memo table of +1 length for target becuase its not an array , its a value. hence it will not be stored as target-1. It will be stored as target 
+// function subset(weights, target, n, memo){
+//      if(target == 0) {
+//         return true
+//     }
+
+//     if(n < 0) return false
+
+//     if (memo[n][target] != -1) 
+//         return memo[n][target]
+//     if(weights [n]<= target){
+//         const pick = subset(weights, target-weights[n], n-1, memo)
+//         const skip =  subset(weights, target, n-1, memo)
+//         memo[n][target] = pick || skip
+//         return memo[n][target]
+//     }
+//     else {
+//         memo[n][target] = subset(weights, target, n-1, memo)
+//         return memo[n][target]
+//     }
+// }
+
+
+//----------------------tabulation implementation----------
 function subset(weights, target, n){
-     if(target == 0) {
-        return true
+    n = weights.length
+    dp = Array.from({length: n+1}, ()=> new Array(target+1))
+
+    // intialize
+    for (let i=0; i<n+1; i++){
+        dp[i][0] = false 
     }
 
-    if(n < 0) return false
+    for(letj=0; j< target+1; j++){
+        dp[0][j] = true 
+    }
+    
+    for(let i=0; i<=n; i++){
+       for (let j=0; j<=target; j++){
+            if(i==0 || j==0)
+                dp[i][j] = true
 
-    if(weights [n]<= target){
-        const pick = subset(weights, target-weights[n], n-1)
-        const skip =  subset(weights, target, n-1)
-        return pick || skip 
+       }
     }
-    else {
-        return subset(weights, target, n-1)
-    }
+
+   
 }
 
-// console.log(subset([3,5,2], 5, 2))  // true
-// console.log(subset([3,6,2], 7, 2))  // false
+
+
+
+// const memo =  [ [ -1, -1, -1, -1, -1, -1 ], [ -1, -1, -1, -1, -1, -1 ] ]
+// console.log(subset([5], 5, 0, memo))  // true
 
 // [arr, target, expected]
 const testCases = [
@@ -59,7 +112,10 @@ const testCases = [
 
 let passed = 0, failed = 0
 testCases.forEach(([arr, target, expected], i) => {
-    const result = subset(arr, target, arr.length-1)
+    const n = arr.length
+    memo = Array.from({length : n+1}, ()=> new Array(target+1))
+    console.log('memo = ', memo, n)
+    const result = subset(arr, target, n-1, memo)
     const tc = `TC-${String(i+1).padStart(2,'0')}`
     if(result !== expected){
         failed++
