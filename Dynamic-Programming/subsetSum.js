@@ -41,28 +41,38 @@
 
 
 //----------------------tabulation implementation----------
+
 function subset(weights, target, n){
     n = weights.length
     dp = Array.from({length: n+1}, ()=> new Array(target+1))
 
     // intialize
-    for (let i=0; i<n+1; i++){
-        dp[i][0] = false 
+    for(let j=0; j< target+1; j++){
+        dp[0][j] = false 
     }
 
-    for(letj=0; j< target+1; j++){
-        dp[0][j] = true 
+    for (let i=0; i<n+1; i++){
+        dp[i][0] = true 
     }
-    
-    for(let i=0; i<=n; i++){
-       for (let j=0; j<=target; j++){
-            if(i==0 || j==0)
-                dp[i][j] = true
+
+    //start with 1st index 
+    for(let i=1; i<=n; i++){
+       for (let j=1; j<=target; j++){
+            
+        if(weights[i-1]<= j){
+            pick = dp[i-1][j - weights[i-1]] ? true : false 
+            skip = dp[i-1][j]
+
+            dp[i][j] = pick || skip 
+        }
+        else {
+            dp[i][j] = dp[i-1][j]
+        }
 
        }
     }
 
-   
+   return dp[n][target]
 }
 
 
@@ -113,9 +123,17 @@ const testCases = [
 let passed = 0, failed = 0
 testCases.forEach(([arr, target, expected], i) => {
     const n = arr.length
-    memo = Array.from({length : n+1}, ()=> new Array(target+1))
-    console.log('memo = ', memo, n)
-    const result = subset(arr, target, n-1, memo)
+    //recursive approach function call
+    // const result = subset(arr, target, n-1)
+
+    // memoization approach function call
+    // memo = Array.from({length : n+1}, ()=> new Array(target+1))
+    // const result = subset(arr, target, n-1, memo)
+
+    //Tabulation approach function call 
+    const result = subset(arr, target, n-1)
+
+
     const tc = `TC-${String(i+1).padStart(2,'0')}`
     if(result !== expected){
         failed++
