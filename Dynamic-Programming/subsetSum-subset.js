@@ -1,7 +1,7 @@
 // ----------------------Recursive implementation----------
 function subset(weights, target, n, arr){
      if(target == 0) {
-        return true
+        return arr
     }
 
     if(n < 0) return false
@@ -16,6 +16,7 @@ function subset(weights, target, n, arr){
     }
 }
 
+console.log(subset([3,5,2], 0, 2, []))
 //----------------------memoization implementation----------
 //we created memo table of +1 length for target becuase its not an array , its a value. hence it will not be stored as target-1. It will be stored as target 
 // function subset(weights, target, n, memo){
@@ -120,27 +121,27 @@ const testCases = [
     [[1,2,3],   7,  false],  // exceeds total sum 6
 ]
 
-let passed = 0, failed = 0
-testCases.forEach(([arr, target, expected], i) => {
-    const n = arr.length
-    //recursive approach function call
-    const result = subset(arr, target, n-1, [])
+// let passed = 0, failed = 0
+// testCases.forEach(([arr, target, expected], i) => {
+//     const n = arr.length
+//     //recursive approach function call
+//     const result = subset(arr, target, n-1, [])
 
-    // memoization approach function call
-    // memo = Array.from({length : n+1}, ()=> new Array(target+1))
-    // const result = subset(arr, target, n-1, memo)
+//     // memoization approach function call
+//     // memo = Array.from({length : n+1}, ()=> new Array(target+1))
+//     // const result = subset(arr, target, n-1, memo)
 
-    //Tabulation approach function call 
-    // const result = subset(arr, target, n-1)
+//     //Tabulation approach function call 
+//     // const result = subset(arr, target, n-1)
 
 
-    const tc = `TC-${String(i+1).padStart(2,'0')}`
-    if(result !== expected){
-        failed++
-        console.log(`${tc}: ❌ FAIL | arr=${JSON.stringify(arr)} target=${target} Expected: ${expected}, Got: ${result}`)
-    } else {
-        passed++
-        console.log(`${tc}: ✅ PASS | arr=${JSON.stringify(arr)} target=${target} Expected: ${expected}`)
-    }
-})
-console.log(`\nResults: ${passed} passed, ${failed} failed out of ${testCases.length} tests`)
+//     const tc = `TC-${String(i+1).padStart(2,'0')}`
+//     if(result !== expected){
+//         failed++
+//         console.log(`${tc}: ❌ FAIL | arr=${JSON.stringify(arr)} target=${target} Expected: ${expected}, Got: ${result}`)
+//     } else {
+//         passed++
+//         console.log(`${tc}: ✅ PASS | arr=${JSON.stringify(arr)} target=${target} Expected: ${expected}`)
+//     }
+// })
+// console.log(`\nResults: ${passed} passed, ${failed} failed out of ${testCases.length} tests`)
