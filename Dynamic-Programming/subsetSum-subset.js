@@ -1,44 +1,44 @@
 // ----------------------Recursive implementation----------
-function subset(weights, target, n, arr){
+// function subset(weights, target, n, arr = []){
+//      if(target == 0) {
+//         return arr
+//     }
+
+//     if(n < 0) return null
+
+//     if(weights [n]<= target){
+//         const pick = subset(weights, target-weights[n], n-1, [weights[n], ...arr])
+//         const skip =  subset(weights, target, n-1, arr)
+//         return pick || skip 
+//     }
+//     else {
+//         return subset(weights, target, n-1, arr)
+//     }
+// }
+
+// console.log(subset([3,5,2], 0, 2, []))
+//----------------------memoization implementation----------
+//we created memo table of +1 length for target becuase its not an array , its a value. hence it will not be stored as target-1. It will be stored as target 
+function subset(weights, target, n, arr, memo){
      if(target == 0) {
         return arr
     }
 
-    if(n < 0) return false
+    if(n < 0) return null
 
+    if (memo[n][target] != -1) 
+        return memo[n][target]
     if(weights [n]<= target){
-        const pick = subset(weights, target-weights[n], n-1, [weights[n], ...arr])
-        const skip =  subset(weights, target, n-1, arr)
-        return pick || skip 
+        const pick = subset(weights, target-weights[n], n-1, [weights[n], ...arr], memo)
+        const skip =  subset(weights, target, n-1, memo)
+        memo[n][target] = pick || skip
+        return memo[n][target]
     }
     else {
-        return subset(weights, target, n-1, arr)
+        memo[n][target] = subset(weights, target, n-1, memo)
+        return memo[n][target]
     }
 }
-
-console.log(subset([3,5,2], 0, 2, []))
-//----------------------memoization implementation----------
-//we created memo table of +1 length for target becuase its not an array , its a value. hence it will not be stored as target-1. It will be stored as target 
-// function subset(weights, target, n, memo){
-//      if(target == 0) {
-//         return true
-//     }
-
-//     if(n < 0) return false
-
-//     if (memo[n][target] != -1) 
-//         return memo[n][target]
-//     if(weights [n]<= target){
-//         const pick = subset(weights, target-weights[n], n-1, memo)
-//         const skip =  subset(weights, target, n-1, memo)
-//         memo[n][target] = pick || skip
-//         return memo[n][target]
-//     }
-//     else {
-//         memo[n][target] = subset(weights, target, n-1, memo)
-//         return memo[n][target]
-//     }
-// }
 
 
 //----------------------tabulation implementation----------
@@ -83,65 +83,86 @@ console.log(subset([3,5,2], 0, 2, []))
 // console.log(subset([5], 5, 0, memo))  // true
 
 // [arr, target, expected]
-const testCases = [
-    // ── Zero Target ──────────────────────────────────────────────────────
-    [[3,5,2],   0,  true],   // empty subset always sums to 0
-    [[],        0,  true],   // empty array, target 0
+// expected → null if no subset found, array of items if found
 
-    // ── Empty Array ───────────────────────────────────────────────────────
-    [[],        5,  false],  // no items, target unreachable
+const testCases = [
+    // ── Base Cases ────────────────────────────────────────────────────────
+    [[],          0,   []],          // empty array, target 0 → empty subset
+    [[],          5,   null],        // empty array, target > 0 → impossible
+    [[3,5,2],     0,   []],          // target 0 → always empty subset
 
     // ── Single Item ───────────────────────────────────────────────────────
-    [[5],       5,  true],   // single item equals target
-    [[5],       3,  false],  // single item greater than target
+    [[5],         5,   [5]],         // single item equals target
+    [[5],         3,   null],        // single item greater than target
+    [[5],        10,   null],        // single item less than target, cant reach
 
     // ── Standard Cases ────────────────────────────────────────────────────
-    [[3,5,2],   2,  true],   // {2} = 2
-    [[3,5,2],   3,  true],   // {3} = 3
-    [[3,5,2],   5,  true],   // {5} or {3,2} = 5
-    [[3,5,2],   7,  true],   // {5,2} = 7
-    [[3,5,2],   8,  true],   // {3,5} = 8
-    [[3,5,2],  10,  true],   // {3,5,2} = 10
+    [[3,5,2],     2,   [2]],         // single item found
+    [[3,5,2],     3,   [3]],         // single item found
+    [[3,5,2],     5,   [5]],         // single item found {5}
+    [[3,5,2],     7,   [2,5]],       // two items {2,5}
+    [[3,5,2],     8,   [5,3]],       // two items {5,3}
+    [[3,5,2],    10,   [2,5,3]],     // all items {2,5,3}
 
     // ── Impossible Cases ──────────────────────────────────────────────────
-    [[3,5,2],   1,  false],  // no subset sums to 1
-    [[3,5,2],   4,  false],  // no subset sums to 4
-    [[3,5,2],   6,  false],  // no subset sums to 6
-    [[3,5,2],   9,  false],  // no subset sums to 9
-    [[3,5,2],  11,  false],  // exceeds total sum 10
+    [[3,5,2],     1,   null],        // no subset sums to 1
+    [[3,5,2],     4,   null],        // no subset sums to 4
+    [[3,5,2],     6,   null],        // no subset sums to 6
+    [[3,5,2],     9,   null],        // no subset sums to 9
+    [[3,5,2],    11,   null],        // exceeds total sum 10
 
     // ── All Even Items, Odd Target ────────────────────────────────────────
-    [[2,4,6],   5,  false],  // all even numbers cant sum to odd target
+    [[2,4,6],     5,   null],        // all even numbers cant sum to odd target
 
     // ── Multiple Subsets Possible ─────────────────────────────────────────
-    [[1,5,11,5], 11, true],  // {11} or {1,5,5} = 11
+    [[1,5,11,5], 11,   [11]],        // {11} found first before {1,5,5}
+    [[1,2,3],     6,   [3,2,1]],     // all items {1,2,3}
 
-    // ── All Items Used ────────────────────────────────────────────────────
-    [[1,2,3],   6,  true],   // {1,2,3} = 6
-    [[1,2,3],   7,  false],  // exceeds total sum 6
+    // ── No Subset ─────────────────────────────────────────────────────────
+    [[1,2,3],     7,   null],        // exceeds total sum 6
 ]
 
-// let passed = 0, failed = 0
-// testCases.forEach(([arr, target, expected], i) => {
-//     const n = arr.length
-//     //recursive approach function call
-//     const result = subset(arr, target, n-1, [])
+// ── Test Runner ───────────────────────────────────────────────────────────────
+function isValidSubset(result, expected, target) {
+    // both null
+    if(result === null && expected === null) return true
 
-//     // memoization approach function call
-//     // memo = Array.from({length : n+1}, ()=> new Array(target+1))
-//     // const result = subset(arr, target, n-1, memo)
+    // one is null, other is not
+    if(result === null || expected === null) return false
 
-//     //Tabulation approach function call 
-//     // const result = subset(arr, target, n-1)
+    // both are arrays — check sum equals target, not exact order
+    const sum = result.reduce((a, b) => a + b, 0)
+    return sum === target
+}
 
+function runTests(testCases) {
+    let passed = 0, failed = 0
 
-//     const tc = `TC-${String(i+1).padStart(2,'0')}`
-//     if(result !== expected){
-//         failed++
-//         console.log(`${tc}: ❌ FAIL | arr=${JSON.stringify(arr)} target=${target} Expected: ${expected}, Got: ${result}`)
-//     } else {
-//         passed++
-//         console.log(`${tc}: ✅ PASS | arr=${JSON.stringify(arr)} target=${target} Expected: ${expected}`)
-//     }
-// })
-// console.log(`\nResults: ${passed} passed, ${failed} failed out of ${testCases.length} tests`)
+    testCases.forEach(([arr, target, expected], i) => {
+        let n = arr.length
+
+        //recursive approach 
+        // const result = subset(arr, target, arr.length-1)
+
+        // memoization approach function call
+        memo = Array.from({length : n+1}, ()=> new Array(target+1).fill(-1))
+        // console.log('memo = ', memo)
+        const result = subset(arr, target, arr.length-1, [], memo)
+        const tc = `TC-${String(i+1).padStart(2,'0')}`
+
+        const match = isValidSubset(result, expected, target)
+
+        if(!match){
+            failed++
+            console.log(`${tc}: ❌ FAIL | arr=${JSON.stringify(arr)} target=${target}`)
+            console.log(`        Expected: ${JSON.stringify(expected)}, Got: ${JSON.stringify(result)}`)
+        } else {
+            passed++
+            console.log(`${tc}: ✅ PASS | arr=${JSON.stringify(arr)} target=${target} → ${JSON.stringify(result)}`)
+        }
+    })
+
+    console.log(`\nResults: ${passed} passed, ${failed} failed out of ${testCases.length} tests`)
+}
+
+runTests(testCases)
