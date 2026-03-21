@@ -19,68 +19,71 @@
 // console.log(subset([3,5,2], 0, 2, []))
 //----------------------memoization implementation----------
 //we created memo table of +1 length for target becuase its not an array , its a value. hence it will not be stored as target-1. It will be stored as target 
-function subset(weights, target, n, arr, memo){
-     if(target == 0) {
-        return arr
-    }
+// function subset(weights, target, n, arr, memo){
+//      if(target == 0) {
+//         return arr
+//     }
 
-    if(n < 0) return null
+//     if(n < 0) return null
 
-    if (memo[n][target] != -1) 
-        return memo[n][target]
-    if(weights [n]<= target){
-        const pick = subset(weights, target-weights[n], n-1, [weights[n], ...arr], memo)
-        const skip =  subset(weights, target, n-1, memo)
-        memo[n][target] = pick || skip
-        return memo[n][target]
-    }
-    else {
-        memo[n][target] = subset(weights, target, n-1, memo)
-        return memo[n][target]
-    }
-}
+//     if (memo[n][target] != -1) 
+//         return memo[n][target]
+//     if(weights [n]<= target){
+//         const pick = subset(weights, target-weights[n], n-1, [weights[n], ...arr], memo)
+//         const skip =  subset(weights, target, n-1,arr, memo)
+//         memo[n][target] = pick || skip
+//         return memo[n][target]
+//     }
+//     else {
+//         memo[n][target] = subset(weights, target, n-1, arr, memo)
+//         return memo[n][target]
+//     }
+// }
 
+//  memo = Array.from({length : 4}, ()=> new Array(8).fill(-1))
+// subset([3,5,2], 7, 2, [], memo)
 
 //----------------------tabulation implementation----------
 
-// function subset(weights, target, n){
-//     n = weights.length
-//     dp = Array.from({length: n+1}, ()=> new Array(target+1))
+function subset(weights, target, n){
+    n = weights.length
+    dp = Array.from({length: n+1}, ()=> new Array(target+1))
 
-//     // intialize
-//     for(let j=0; j< target+1; j++){
-//         dp[0][j] = false 
-//     }
+    // intialize
+    for(let j=0; j< target+1; j++){
+        dp[0][j] = null
+    }
 
-//     for (let i=0; i<n+1; i++){
-//         dp[i][0] = true 
-//     }
+    for (let i=0; i<n+1; i++){
+        dp[i][0] = [] 
+    }
 
-//     //start with 1st index 
-//     for(let i=1; i<=n; i++){
-//        for (let j=1; j<=target; j++){
+    //start with 1st index 
+    for(let i=1; i<=n; i++){
+       for (let j=1; j<=target; j++){
             
-//         if(weights[i-1]<= j){
-//             pick = dp[i-1][j - weights[i-1]] ? true : false 
-//             skip = dp[i-1][j]
+        if(weights[i-1]<= j){
+            pick = dp[i-1][j - weights[i-1]] 
+            if(pick != null)
+                dp[i][j] = [weights[i-1], ...pick]
+            else
+                 dp[i][j] = dp[i-1][j]
 
-//             dp[i][j] = pick || skip 
-//         }
-//         else {
-//             dp[i][j] = dp[i-1][j]
-//         }
+        }
+        else {
+            dp[i][j] = dp[i-1][j]
+        }
 
-//        }
-//     }
+       }
+    }
 
-//    return dp[n][target]
-// }
-
+   return dp[n][target]
+}
 
 
 
-// const memo =  [ [ -1, -1, -1, -1, -1, -1 ], [ -1, -1, -1, -1, -1, -1 ] ]
-// console.log(subset([5], 5, 0, memo))  // true
+
+// console.log(subset([3,5,2], 7, 3))  
 
 // [arr, target, expected]
 // expected → null if no subset found, array of items if found
@@ -145,9 +148,13 @@ function runTests(testCases) {
         // const result = subset(arr, target, arr.length-1)
 
         // memoization approach function call
-        memo = Array.from({length : n+1}, ()=> new Array(target+1).fill(-1))
-        // console.log('memo = ', memo)
-        const result = subset(arr, target, arr.length-1, [], memo)
+        // memo = Array.from({length : n+1}, ()=> new Array(target+1).fill(-1))
+        // const result = subset(arr, target, arr.length-1, [], memo)
+
+        //Tabulation Approach
+        const result = subset(arr, target, arr.length-1)
+
+
         const tc = `TC-${String(i+1).padStart(2,'0')}`
 
         const match = isValidSubset(result, expected, target)
