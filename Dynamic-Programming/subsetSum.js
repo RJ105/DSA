@@ -1,5 +1,5 @@
 // ----------------------Recursive implementation----------
-function subset(weights, target, n, arr){
+function subset(weights, target, n){
      if(target == 0) {
         return true
     }
@@ -7,12 +7,12 @@ function subset(weights, target, n, arr){
     if(n < 0) return false
 
     if(weights [n]<= target){
-        const pick = subset(weights, target-weights[n], n-1, [weights[n], ...arr])
-        const skip =  subset(weights, target, n-1, arr)
+        const pick = subset(weights, target-weights[n], n-1)
+        const skip =  subset(weights, target, n-1)
         return pick || skip 
     }
     else {
-        return subset(weights, target, n-1, arr)
+        return subset(weights, target, n-1)
     }
 }
 
