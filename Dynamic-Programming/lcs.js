@@ -1,4 +1,4 @@
-
+//-----------------------------Recursive implementation--------------
 function lcsRecursive(s1, s2, m, n){
     if(m < 0 || n < 0)
         return 0
@@ -10,20 +10,39 @@ function lcsRecursive(s1, s2, m, n){
 }
 
 
+//-----------------------------Memoization implementation--------------
+function lcsMemo(s1, s2, m, n, memo){
+    if(m < 0 || n < 0)
+        return 0
+    if(memo[m][n] != -1)
+        return memo[m][n]
+    if(s1[m] === s2[n]){
+        memo[m][n] = 1 + lcsMemo(s1, s2, m-1, n-1, memo)
+        return memo[m][n]
+    }
+    memo[m][n] = Math.max(lcsMemo(s1, s2, m-1, n, memo), lcsMemo(s1, s2, m, n-1, memo))
+    return memo[m][n]
+
+}
+
 const testCases = [
-  { s1: "AGGTAB",   s2: "GXTXAYB",  expected: 4 },
-  { s1: "ABCBDAB",  s2: "BDCABA",   expected: 4 },
-  { s1: "ABC",      s2: "AC",        expected: 2 },
+//   { s1: "AGGTAB",   s2: "GXTXAYB",  expected: 4 },
+//   { s1: "ABCBDAB",  s2: "BDCABA",   expected: 4 },
+//   { s1: "ABC",      s2: "AC",        expected: 2 },
   { s1: "ABC",      s2: "DEF",       expected: 0 }, // No common chars
   { s1: "A",        s2: "A",         expected: 1 }, // Single char match
   { s1: "",         s2: "ABC",       expected: 0 }, // Empty string
+  { s1: "",         s2: "",          expected: 0 }
 ];
 
 console.log("=".repeat(60));
 testCases.forEach(({ s1, s2, expected }, i) => {
     let m = s1.length
     let n = s2.length
-  const result   = lcsRecursive(s1, s2, m-1, n-1);
+    // const result   = lcsRecursive(s1, s2, m-1, n-1);
+
+    memo = Array.from({length : m+1}, ()=> new Array(n+1).fill(-1))
+    const result   = lcsMemo(s1, s2, m-1, n-1, memo);
 //   const memo        = lcsMemo(s1, s2);
 //   const { length, lcs } = lcsTabulation(s1, s2);
 
