@@ -11,35 +11,38 @@ function lcsRecursive(s1, s2, m, n, count){
 
 
 //-----------------------------Memoization implementation--------------
-function lcsMemo(s1, s2, m, n, count, memo){
-    if(m < 0 || n < 0)
-        return count
-    if(memo[m][n] != -1)
-        return memo[m][n]
-    if(s1[m] === s2[n]){
-        memo[m][n] = lcsMemo(s1, s2, m-1, n-1, count + 1, memo)
-        return memo[m][n]
-    }
-    memo[m][n] = Math.max(count, lcsMemo(s1, s2, m-1, n, 0, memo), lcsMemo(s1, s2, m, n-1, 0, memo))
-    return memo[m][n]
+// function lcsMemo(s1, s2, m, n, memo){
+//     if(m < 0 || n < 0)
+//         return 0
+//     if(memo[m][n] != -1)
+//         return memo[m][n]
+//     if(s1[m] === s2[n]){
+//         memo[m][n] = 1 + lcsMemo(s1, s2, m-1, n-1, memo)
+//         return memo[m][n]
+//     }
+//     memo[m][n] = Math.max(count, lcsMemo(s1, s2, m-1, n, 0, memo), lcsMemo(s1, s2, m, n-1, 0, memo))
+//     return memo[m][n]
 
-}
+// }
 
 //-----------------------------Tabulation implementation--------------
 
 function lcsTabulation(s1, s2, m, n){
     const dp = Array.from({length: m+1}, ()=> new Array(n+1).fill(0))
-
+    let maxLen = 0
     for (let i = 1; i <= m; i++) {
         for (let j = 1; j <= n; j++) {
             if (s1[i - 1] === s2[j - 1]) {
                 dp[i][j] = dp[i - 1][j - 1] + 1;
+                if(dp[i][j] > maxLen){
+                    maxLen = dp[i][j] 
+                }
             } else {
-                dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                dp[i][j] = 0
             }
         }
    }
-   return dp[m][n]
+   return maxLen
 }
 
 const testCases =[
@@ -61,9 +64,10 @@ testCases.forEach(({ s1, s2, expected }, i) => {
     let n = s2.length
     // const result   = lcsRecursive(s1, s2, m-1, n-1, 0);
 
-    memo = Array.from({length : m+1}, ()=> new Array(n+1).fill(-1))
-    const result   = lcsMemo(s1, s2, m-1, n-1, 0, memo);
-    // const result  = lcsTabulation(s1, s2, m, n);
+    // memo = Array.from({length : m+1}, ()=> new Array(n+1).fill(-1))
+    // const result   = lcsMemo(s1, s2, m-1, n-1, memo);
+
+    const result  = lcsTabulation(s1, s2, m, n);
 
   const pass = result === expected
 
