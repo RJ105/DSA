@@ -45,6 +45,29 @@ function lcsTabulation(s1, s2, m, n){
    return maxLen
 }
 
+
+//-----------------------------Tabulation implementation to get substring--------------
+
+// function lcsTabulation(s1, s2, m, n){
+//     const dp = Array.from({length: m+1}, ()=> new Array(n+1).fill(0))
+//     let maxLen = 0
+//     let endIndex = 0
+//     for (let i = 1; i <= m; i++) {
+//         for (let j = 1; j <= n; j++) {
+//             if (s1[i - 1] === s2[j - 1]) {
+//                 dp[i][j] = dp[i - 1][j - 1] + 1;
+//                 if(dp[i][j] > maxLen){
+//                     maxLen = dp[i][j] 
+//                     endIndex = i
+//                 }
+//             } else {
+//                 dp[i][j] = 0
+//             }
+//         }
+//    }
+//    return s1.substring(endIndex - maxLen, endIndex)
+// }
+
 const testCases =[
   { s1: "ABCDEF",      s2: "ZCDEMF",     expected: 3    },
   { s1: "AGGTAB",      s2: "GXTXAYB",    expected: 1      }, // no long contiguous match
