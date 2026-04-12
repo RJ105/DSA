@@ -1,3 +1,6 @@
+//Given two strings s1 and s2, find the minimum number of insertions and deletions required to convert s1 into s2.
+// solution using formula ==> m + n - 2*lcs
+
 //-----------------------------Recursive implementation--------------
 function lcsRecursive(s1, s2, m, n){
     if(m < 0 || n < 0)
