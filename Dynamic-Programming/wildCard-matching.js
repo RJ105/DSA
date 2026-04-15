@@ -3,6 +3,12 @@
 
 function wildCardRecursive(s, p, m, n){
 
+    // Both exhausted — full match
+  if (m === 0 && n === 0) return true;
+
+  // Pattern exhausted but s still has chars
+  if (n === 0) return false;
+
     if(s[m] == p[n] || p[n] == '?'){
         return wildCardRecursive(s, p, m-1, n-1)
     }
