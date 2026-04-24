@@ -22,6 +22,31 @@ function buyAndSellRecursive(prices, i, buyFlag){
     }
 }
 
+//-----------------------------Memoization implementation--------------
+function buyAndSellMemo(prices, i, buyFlag, memo){
+    if(i=== prices.length)
+        return 0
+    
+    if(memo[i][buyFlag] != -1)
+        return memo[i][buyFlag]
+
+    if(buyFlag === 1){
+        //buy options 
+        let bought = - prices[i] + buyAndSellMemo(prices, i+1, 0, memo)
+        let notBought = buyAndSellMemo(prices, i+1, 1, memo)
+        memo[i][buyFlag] =  Math.max(bought, notBought)
+        return memo[i][buyFlag]
+    }else{
+        //sell options
+        let sold = prices[i] + buyAndSellMemo(prices, i+1, 1, memo)
+        let notSold = buyAndSellMemo(prices, i+1, 0, memo)
+        memo[i][buyFlag] = Math.max(sold, notSold)
+        return memo[i][buyFlag]
+    }
+}
+
+//-----------------------------Tabulation implementation--------------
+
 
 const testCases = [
   { prices: [7, 1, 5, 3, 6, 4],   expected: 7  },
@@ -36,11 +61,12 @@ const testCases = [
 console.log("=".repeat(65));
 testCases.forEach(({ prices, expected }, idx) => {
     let n = prices.length
-  const recursive  = buyAndSellRecursive(prices, 0, 1);
-//   const memo       = buyAndSellMemo(prices);
-//   const tabulation = buyAndSellTabulation(prices);
+  // const result  = buyAndSellRecursive(prices, 0, 1);
+  let memo = Array.from({length : n}, ()=> new Array(2).fill(-1))
+  const  result = buyAndSellMemo(prices,0, 1, memo )
+//   const result = buyAndSellTabulation(prices);
 
-  const pass = recursive === expected
+  const pass = result === expected
 
   console.log(`Test ${String(idx + 1).padStart(2, "0")}: prices=[${prices}]`);
 //   console.log(`  Recursive: ${recursive} | Memo: ${memo} | Tabulation: ${tabulation}`);
