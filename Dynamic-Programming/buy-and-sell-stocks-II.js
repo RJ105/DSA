@@ -46,6 +46,9 @@ function buyAndSellMemo(prices, i, buyFlag, memo){
 }
 
 //-----------------------------Tabulation implementation--------------
+function buyAndSellTabulation(){
+    
+}
 
 
 const testCases = [
@@ -62,9 +65,9 @@ console.log("=".repeat(65));
 testCases.forEach(({ prices, expected }, idx) => {
     let n = prices.length
   // const result  = buyAndSellRecursive(prices, 0, 1);
-  let memo = Array.from({length : n}, ()=> new Array(2).fill(-1))
-  const  result = buyAndSellMemo(prices,0, 1, memo )
-//   const result = buyAndSellTabulation(prices);
+//   let memo = Array.from({length : n}, ()=> new Array(2).fill(-1))
+//   const  result = buyAndSellMemo(prices,0, 1, memo )
+  const result = buyAndSellTabulation(prices);
 
   const pass = result === expected
 
