@@ -45,9 +45,50 @@ function buyAndSellMemo(prices, i, buyFlag, memo){
     }
 }
 
-//-----------------------------Tabulation implementation--------------
-function buyAndSellTabulation(){
-    
+// //-----------------------------Tabulation implementation--------------
+// function buyAndSellTabulation(prices){
+//     let n = prices.length
+//     let dp = Array.from({length : n+1}, ()=> Array(2).fill(0))
+
+//     for(let i = n-1; i>=0; i--){
+//         let profit = 0
+//         for(let buy=0; buy<=1; buy++){
+//             if(buy){
+//                 profit = Math.max(-prices[i] + dp[i+1][0], dp[i+1][1])
+//             }
+//             else{
+//                 profit = Math.max(prices[i] + dp[i+1][1], dp[i+1][0])
+//             }
+//              dp[i][buy] = profit
+//         }
+       
+//     }
+//     return dp[0][1] //cannot return  dp[0][0] because 0 means sell i.e it indicates you are already  holding stocks
+// }
+
+
+//-----------------------------Tabulation implementation - space optimised--------------
+function buyAndSellTabulation(prices){
+    let n = prices.length
+    let prev = Array(2).fill(0)
+    let curr = Array(2).fill(0)
+
+    // let dp = Array.from({length : n+1}, ()=> Array(2).fill(0))
+
+    for(let i = n-1; i>=0; i--){
+        let profit = 0
+        for(let buy=0; buy<=1; buy++){
+            if(buy){
+                profit = Math.max(-prices[i] + prev[0], prev[1])
+            }
+            else{
+                profit = Math.max(prices[i] + prev[1], prev[0])
+            }
+             curr[buy] = profit
+        }
+       prev = curr
+    }
+    return prev[1] //cannot return  dp[0][0] because 0 means sell i.e it indicates you are already  holding stocks
 }
 
 
