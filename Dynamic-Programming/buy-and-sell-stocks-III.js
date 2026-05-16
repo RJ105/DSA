@@ -49,22 +49,26 @@ function buyAndSellMemo(prices, i, buyFlag, memo, count){
 function buyAndSellTabulation(prices){
     let n = prices.length
     let dp = Array.from({length : n+1}, ()=> Array.from({length:2}, ()=> Array(3).fill(0)))
+    //base case 
+    //dp[n][*][*] = dp[*][*][2] = 0
 
     for(let i = n-1; i>=0; i--){
         let profit = 0
         for(let buy=0; buy<=1; buy++){
-            while(count <=2)
-            if(buy){
-                profit = Math.max(-prices[i] + dp[i+1][0], dp[i+1][1])
+            for(let count=0; count<=1; count++){
+                 if(buy){
+                profit = Math.max(-prices[i] + dp[i+1][0][count], dp[i+1][1][count])
+                }
+                else{
+                    profit = Math.max(prices[i] + dp[i+1][1][count+1], dp[i+1][0][count])
+                }
+                dp[i][buy][count] = profit
             }
-            else{
-                profit = Math.max(prices[i] + dp[i+1][1][count+1], dp[i+1][0])
-            }
-             dp[i][buy] = profit
+           
         }
        
     }
-    return dp[0][1] //cannot return  dp[0][0] because 0 means sell i.e it indicates you are already  holding stocks
+    return dp[0][1][0] //day 0, canBuy = 1, txnCount = 0 used; if use dp[0][1][2] it means 2 txn already done  
 }
 
 
@@ -107,12 +111,10 @@ console.log("=".repeat(65));
 testCases.forEach(({ prices, expected }, idx) => {
     let n = prices.length
 //   const result  = buyAndSellRecursive(prices, 0, 1, 0);
-  const memo = Array.from({ length: n }, () => Array.from({ length: 2 }, () => new Array(3).fill(-1)));
-  console.log('memo = ',memo)
-  const  result = buyAndSellMemo(prices,0, 1, memo, 0 )
-    console.log('memo = ',memo)
+//   const memo = Array.from({ length: n }, () => Array.from({ length: 2 }, () => new Array(3).fill(-1)));
+//   const  result = buyAndSellMemo(prices,0, 1, memo, 0 )
 
-//   const result = buyAndSellTabulation(prices);
+  const result = buyAndSellTabulation(prices);
 
   const pass = result === expected
 
