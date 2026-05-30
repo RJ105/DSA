@@ -1,4 +1,4 @@
-function lisRecursive(nums, i = 0, prevIndex = -1) {
+function lisRecursive(nums, i, prevIndex ) {
   if (i === nums.length) return 0;
 
   // Skip current element
@@ -14,6 +14,22 @@ function lisRecursive(nums, i = 0, prevIndex = -1) {
 }
 
 
+function lisMemo(nums, i, prevIndex, memo) {
+  if (i === nums.length) return 0;
+
+  // Skip current element
+  if(memo[i][prevIndex +1 ] != -1)
+    return memo[i][prevIndex +1]
+  let skip = lisMemo(nums, i + 1, prevIndex, memo);
+
+  // Pick current element only if it's greater than previous picked
+  let pick = 0;
+  if (prevIndex === -1 || nums[i] > nums[prevIndex]) {
+    pick = 1 + lisMemo(nums, i + 1, i, memo);
+  }
+  memo[i][prevIndex +1] = Math.max(pick, skip)
+  return memo[i][prevIndex +1]
+}
 const testCases = [
   { nums: [10, 9, 2, 5, 3, 7, 101, 18],  expected: 4 }, // [2,3,7,101]
   { nums: [0, 1, 0, 3, 2, 3],            expected: 4 }, // [0,1,2,3]
@@ -27,8 +43,10 @@ const testCases = [
 
 console.log("=".repeat(65));
 testCases.forEach(({ nums, expected }, idx) => {
-  const result  = lisRecursive(nums);
-  // const memo       = lisMemo(nums);
+  const n = nums.length 
+  // const result  = lisRecursive(nums, 0, -1);
+  memo = Array.from({length : n}, ()=> new Array(n+1).fill(-1))
+  const result     = lisMemo(nums, 0, -1, memo);
   // const tabulation = lisTabulation(nums);
 
   const pass = result === expected;
