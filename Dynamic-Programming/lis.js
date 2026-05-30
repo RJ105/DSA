@@ -1,3 +1,6 @@
+
+//-----------------------------Recursive implementation--------------
+
 function lisRecursive(nums, i, prevIndex ) {
   if (i === nums.length) return 0;
 
@@ -13,6 +16,7 @@ function lisRecursive(nums, i, prevIndex ) {
   return Math.max(pick, skip);
 }
 
+//-----------------------------Memoization implementation--------------
 
 function lisMemo(nums, i, prevIndex, memo) {
   if (i === nums.length) return 0;
@@ -30,6 +34,34 @@ function lisMemo(nums, i, prevIndex, memo) {
   memo[i][prevIndex +1] = Math.max(pick, skip)
   return memo[i][prevIndex +1]
 }
+
+
+
+//-----------------------------Tabulation implementation--------------
+function lisTabulation(nums){
+  const n = nums.length 
+  let dp = Array.from(
+    {length : n+1},
+    ()=> Array(n+1).fill(0)
+  )
+
+  for(let i=n-1; i>=0; i--){
+    for(let prev=i-1; prev>=-1; prev--){
+      let skip = dp[i+1][prev+1]
+      let pick = 0;
+      if(prev === -1 || nums[i] > nums[prev]){
+        pick = 1 + dp[i+1][i+1] // for pick case curr will be i+1 and prev will become i but for access purpose i+1
+      }
+      dp[i][prev+1] = Math.max(pick, skip)
+    }
+  }
+
+  return dp[0][0]
+
+}
+
+
+
 const testCases = [
   { nums: [10, 9, 2, 5, 3, 7, 101, 18],  expected: 4 }, // [2,3,7,101]
   { nums: [0, 1, 0, 3, 2, 3],            expected: 4 }, // [0,1,2,3]
@@ -45,9 +77,9 @@ console.log("=".repeat(65));
 testCases.forEach(({ nums, expected }, idx) => {
   const n = nums.length 
   // const result  = lisRecursive(nums, 0, -1);
-  memo = Array.from({length : n}, ()=> new Array(n+1).fill(-1))
-  const result     = lisMemo(nums, 0, -1, memo);
-  // const tabulation = lisTabulation(nums);
+  // memo = Array.from({length : n}, ()=> new Array(n+1).fill(-1))
+  // const result     = lisMemo(nums, 0, -1, memo);
+  const result = lisTabulation(nums);
 
   const pass = result === expected;
 
