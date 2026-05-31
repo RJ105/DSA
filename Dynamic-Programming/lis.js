@@ -57,9 +57,34 @@ function lisTabulation(nums){
   }
 
   return dp[0][0]
-
 }
 
+
+//-----------------------------Tabulation implementation - space optimized--------------
+function lisTabulationSpaceOptimized(nums){
+  const n = nums.length 
+  // let dp = Array.from(
+  //   {length : n+1},
+  //   ()=> Array(n+1).fill(0)
+  // )
+
+  let nextArr = Array(n+1).fill(0)
+  let currArr = Array(n+1).fill(0)
+
+  for(let i=n-1; i>=0; i--){
+    for(let prev=i-1; prev>=-1; prev--){
+      let skip = nextArr[prev+1]
+      let pick = 0;
+      if(prev === -1 || nums[i] > nums[prev]){
+        pick = 1 + nextArr[i+1] // for pick case curr will be i+1 and prev will become i but for access purpose i+1
+      }
+      currArr[prev+1] = Math.max(pick, skip)
+    }
+     nextArr = currArr
+  }
+
+  return currArr[0]
+}
 
 
 const testCases = [
@@ -79,7 +104,8 @@ testCases.forEach(({ nums, expected }, idx) => {
   // const result  = lisRecursive(nums, 0, -1);
   // memo = Array.from({length : n}, ()=> new Array(n+1).fill(-1))
   // const result     = lisMemo(nums, 0, -1, memo);
-  const result = lisTabulation(nums);
+  // const result = lisTabulation(nums);
+  const result = lisTabulationSpaceOptimized(nums);
 
   const pass = result === expected;
 
