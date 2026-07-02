@@ -1,5 +1,6 @@
 function detectCycleUsingBFS(adj, start){
-    const queue = []
+    for(let start=0; start<= adj.length; start++){
+        const queue = []
     const visited = Array(adj.length).fill(0)
     visited[start] = 1
     queue.push([start, -1])
@@ -16,6 +17,8 @@ function detectCycleUsingBFS(adj, start){
             }
         }
     }
+    }
+    
     return false
 
 }
