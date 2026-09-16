@@ -24,7 +24,8 @@ function detectCycleUsingDFS(adj){
         }
         return false // this return will act as termination condition for graph end
     }
-  // visited[0] = true
+
+    //below for loop is used to cover all nodes in disconnected graph
  for (let start = 0; start < adj.length; start++) {  
     if (!visited[start]) {
       visited[start] = 1
@@ -41,8 +42,8 @@ function runTests(testCases) {
   testCases.forEach(({ description, graph, expected }, i) => {
     const result = detectCycleUsingDFS(graph);
     const ok = result === expected;
-    if (ok) { passed++; console.log(`✓ Test ${i + 1}: ${description}`); }
-    else { failed++; console.log(`✗ Test ${i + 1}: ${description} | expected ${expected}, got ${result}`); }
+    if (ok) { passed++; console.log(`✅ Test ${i + 1}: ${description}`); }
+    else { failed++; console.log(`❌ Test ${i + 1}: ${description} | expected ${expected}, got ${result}`); }
   });
   console.log(`\n${passed}/${passed + failed} passed`);
 }
@@ -81,6 +82,13 @@ const testCases = [
   // ── Edge cases ────────────────────────────────────────────────
   { description: "[Edge] Single node, no edges",                                  graph: [[]],                                 expected: false },
   { description: "[Edge] Two isolated nodes",                                     graph: [[],[]],                              expected: false },
+  {
+  description: "[Disconnected][Cycle] Self loop in separate component",
+  // 0---1       2
+  //             ↺
+  graph: [[1], [0], [2]],
+  expected: true,
+},
 ];
 
 runTests(testCases);

@@ -5,6 +5,7 @@ function bfs(graph) {
   const order = [];
    for (let start = 0; start < graph.length; start++) {
     if (visited[start]) continue;
+      //With the help of above for loop we can cover disconnected graph as well
 
     visited[start] = true;
     queue.push(start);
