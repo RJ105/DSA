@@ -3,7 +3,7 @@
 // for each cell in we have to maintain new visited array.
 
 //brute force approach
-function nearest1Distance(matrix){
+function nearest1Distance_bruteForce(matrix){
     const rowLen = matrix.length
     const colLen = matrix[0].length 
 
@@ -54,6 +54,51 @@ function nearest1Distance(matrix){
                 distMatrix[i][j] = BFS(i, j)
             }
         }
+    }
+    return distMatrix
+}
+
+
+function nearest1Distance_multiBFS(matrix){
+    const rowLen = matrix.length
+    const colLen = matrix[0].length
+
+    const visited = Array.from({length : rowLen}, ()=> Array(colLen).fill(false))
+    const distMatrix = Array.from({length: rowLen}, ()=>Array(colLen).fill(-1))
+    const direction = [
+        [-1, -1], [-1, 0], [-1, 1],
+        [0, -1],        [0, 1],
+        [1, -1], [1, 0], [1,1]
+    ]
+
+    let queue = []
+
+    //push all the 1's in queue
+    for(let i=0; i<rowLen; i++){
+        for(let j=0; j<colLen; j++){
+            if(matrix[i][j] === 1){
+                queue.push([i,j,0])
+                visited[i][j] = true
+                distMatrix[i][j] = 0
+            }
+        }
+    }
+    
+    //start matrix BFS 
+    while(queue.length){
+        const [r,c,dist] = queue.shift()
+        for(const [dr, dc] of direction){
+           let nr = r + dr 
+           let nc = c + dc 
+             if(nr>=0 && nr < rowLen && nc>=0 && nc < colLen 
+                    && !visited[nr][nc]  && visited[nr][nc] !=1
+                ){
+                    queue.push([nr, nc, dist+1])
+                    visited[nr][nc] = true
+                    distMatrix[nr][nc] = dist+1
+                }
+        }
+
     }
     return distMatrix
 }
@@ -158,7 +203,7 @@ function runTests(testCases) {
     let passed = 0, failed = 0;
 
     testCases.forEach(({ description, matrix, expected }, i) => {
-        const result = nearest1Distance(matrix);
+        const result = nearest1Distance_multiBFS(matrix);
 
         const ok =
             JSON.stringify(result) === JSON.stringify(expected);
