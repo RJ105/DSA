@@ -91,7 +91,7 @@ function nearest1Distance_multiBFS(matrix){
            let nr = r + dr 
            let nc = c + dc 
              if(nr>=0 && nr < rowLen && nc>=0 && nc < colLen 
-                    && !visited[nr][nc]  && visited[nr][nc] !=1
+                    && !visited[nr][nc] 
                 ){
                     queue.push([nr, nc, dist+1])
                     visited[nr][nc] = true
