@@ -7,53 +7,156 @@
 // 1< rowlimit < rowLen-1
 // 1< colLimit < colLen -1  
 
-function replaceOWithX(matrix){
-    const rowLen = matrix.length 
-    const colLen = matrix[0].length 
 
-    const visited = Array.from({length: matrix.length}, ()=> Array(colLen).fill(false))
-    const direction = [[-1,0], [1,0], [0,-1], [0,1]]
-    function BFS(i, j){
-        let mark = []
-        let queue = []
-        queue.push([i,j])
-        let capture = true 
-        while(queue.length){
-            const [r,c] = queue.shift()
-            for([dr, dc] of direction){
-                let nr = r + dr 
-                let nc = c + dc 
-                if( !visited[nr][nc] && matrix[nr][nc] != 'X'){
-                    if(nr>0 && nr < rowLen-1 && nc>0 && nc < colLen-1){
-                        mark.push([nr,nc])
-                        visited[nr][nc] = true
-                    }else{
-                        capture = false
+//brute force approach : in this approach we will check for all the O node in iteration
+function replaceOWithXBruteForce(board){
+      const rows = board.length;
+
+    if (rows === 0) return board;
+
+    const cols = board[0].length;
+
+    const visited = Array.from(
+        { length: rows },
+        () => Array(cols).fill(false)
+    );
+
+    const directions = [
+        [-1, 0],
+        [1, 0],
+        [0, -1],
+        [0, 1]
+    ];
+
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+
+            // Start BFS for every unvisited O.
+            if (board[r][c] === "O" && !visited[r][c]) {
+
+                const queue = [[r, c]];
+                let front = 0;
+
+                const component = [];
+                let touchesBoundary = false;
+
+                visited[r][c] = true;
+
+                while (front < queue.length) {
+                    const [row, col] = queue[front++];
+
+                    component.push([row, col]);
+
+                    // Check whether this component touches boundary.
+                    if (
+                        row === 0 ||
+                        row === rows - 1 ||
+                        col === 0 ||
+                        col === cols - 1
+                    ) {
+                        touchesBoundary = true;
+                    }
+
+                    for (const [dr, dc] of directions) {
+                        const nr = row + dr;
+                        const nc = col + dc;
+
+                        if (
+                            nr >= 0 && nr < rows &&
+                            nc >= 0 && nc < cols &&
+                            board[nr][nc] === "O" &&
+                            !visited[nr][nc]
+                        ) {
+                            visited[nr][nc] = true;
+                            queue.push([nr, nc]);
+                        }
+                    }
+                }
+
+                // If component does not touch boundary,
+                // replace all its O cells with X.
+                if (!touchesBoundary) {
+                    for (const [row, col] of component) {
+                        board[row][col] = "X";
                     }
                 }
             }
         }
-
-        if(capture){
-            for(const [m,n] of mark){
-                matrix[m][n] = 'X'
-            }
-        }
-
     }
 
-    for(let i=0; i<rowLen; i++){
-        for(let j=0; j<colLen; j++){
-            if(!visited[i][j] && matrix[i][j] === 'O'){
-                visited[i][j] = true
-                BFS(i, j)
-            }
-        }
-    }
-
-    return matrix
+    return board;
 }
 
+
+//smart approach : here we will first preserve the invalid boundary cases and then mark the remaining as X
+function replaceOWithX(board) {
+    const rows = board.length;
+
+    if (rows === 0) return board;
+
+    const cols = board[0].length;
+    if (cols === 0) return board;
+
+    const queue = [];
+    let front = 0;
+
+    const directions = [
+        [-1, 0],
+        [1, 0],
+        [0, -1],
+        [0, 1]
+    ];
+
+    // Step 1: Add boundary O cells to the queue.
+    function addBoundaryCell(r, c) {
+        if (board[r][c] === "O") {
+            board[r][c] = "#";
+            queue.push([r, c]);
+        }
+    }
+
+    for (let r = 0; r < rows; r++) {
+        addBoundaryCell(r, 0);
+        addBoundaryCell(r, cols - 1);
+    }
+
+    for (let c = 0; c < cols; c++) {
+        addBoundaryCell(0, c);
+        addBoundaryCell(rows - 1, c);
+    }
+
+    // Step 2: BFS to preserve all O cells connected to a boundary O.
+    while (front < queue.length) {
+        const [r, c] = queue[front++];
+
+        for (const [dr, dc] of directions) {
+            const nr = r + dr;
+            const nc = c + dc;
+
+            if (
+                nr >= 0 && nr < rows &&
+                nc >= 0 && nc < cols &&
+                board[nr][nc] === "O"
+            ) {
+                board[nr][nc] = "#";
+                queue.push([nr, nc]);
+            }
+        }
+    }
+
+    // Step 3: Replace surrounded O with X; restore safe cells.
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            if (board[r][c] === "O") {
+                board[r][c] = "X";
+            } else if (board[r][c] === "#") {
+                board[r][c] = "O";
+            }
+        }
+    }
+
+    return board;
+}
 
 // Test runner
 function runTests(testCases) {
@@ -63,6 +166,7 @@ function runTests(testCases) {
     testCases.forEach(({ description, board, expected }, i) => {
         // Copy input so the original testcase stays unchanged.
         const input = board.map(row => [...row]);
+        // const result = replaceOWithXBruteForce(input);
         const result = replaceOWithX(input);
 
         const ok =
