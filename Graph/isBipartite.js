@@ -1,30 +1,57 @@
-
-
-
+//DFS approach 
 var isBipartite = function(graph) {
     let n = graph.length
     const color = Array(n).fill(-1)
     const queue = []
+    function DFS(node){
+        for (let neighbour of graph[node]){
+            if(color[neighbour] === -1){
+              color[neighbour] = 1 - color[node]
+              if(!DFS(neighbour))
+                  return false 
+            }
+            else if (color[neighbour] === color[node])
+                return false
+        }
+
+        return true 
+    }
     for(let start=0; start<n; start++){
          if (color[start] !== -1) continue;
         color[start] = 0
-        queue.push(start)
-        while(queue.length){
-            const node = queue.shift()
-            for(let neighbour of graph[node]){
-                if(color[neighbour] === -1){
-                    color[neighbour] = 1 - color[node];
-                    queue.push(neighbour)
-                }
-                else if(color[neighbour] === color[node]){
-                    return false
-                }
-
-            }
-        }
+        if(!DFS(start))
+            return false 
     }
     return true 
 };
+
+
+
+//BFS approach 
+// var isBipartite = function(graph) {
+//     let n = graph.length
+//     const color = Array(n).fill(-1)
+//     const queue = []
+//     for(let start=0; start<n; start++){
+//          if (color[start] !== -1) continue;
+//         color[start] = 0
+//         queue.push(start)
+//         while(queue.length){
+//             const node = queue.shift()
+//             for(let neighbour of graph[node]){
+//                 if(color[neighbour] === -1){
+//                     color[neighbour] = 1 - color[node];
+//                     queue.push(neighbour)
+//                 }
+//                 else if(color[neighbour] === color[node]){
+//                     return false
+//                 }
+
+//             }
+//         }
+//     }
+//     return true 
+// };
 
 
 const testCases = [
